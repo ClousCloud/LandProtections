@@ -7,7 +7,7 @@ use pocketmine\utils\TextFormat;
 use NurAzliYT\LandProtections\commands\ProtectCommand;
 use NurAzliYT\LandProtections\commands\InviteToLandCommand;
 use NurAzliYT\LandProtections\events\BlockEventListener;
-use NurAzliYTLandProtections\land\LandManager;
+use NurAzliYT\LandProtections\land\LandManager;
 use cooldogedev\BedrockEconomy\api\BedrockEconomyAPI;
 use CortexPE\Commando\PacketHooker;
 
