@@ -1,12 +1,12 @@
 <?php
 
-namespace LandProtections\commands;
+namespace NurAzliYT\LandProtections\commands;
 
 use CortexPE\Commando\BaseCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
-use LandProtections\Main;
+use NurAzliYT\LandProtections\Main;
 
 class InviteToLandCommand extends BaseCommand {
 
