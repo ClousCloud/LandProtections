@@ -1,0 +1,22 @@
+name: LandProtections
+main: NurAzliYT\LandProtections\Main
+version: 1.0.0
+api: 5.0.0
+author: NurAzliYT
+depend: BedrockEconomy
+commands:
+  protect:
+    description: Protect a piece of land
+    usage: /protect
+    permission: landprotections.command.protect
+  invitetoland:
+    description: Invite a player to your protected land
+    usage: /invitetoland <player>
+    permission: landprotections.command.invitetoland
+permissions:
+  landprotections.command.protect:
+    description: Allows the user to protect land
+    default: true
+  landprotections.command.invitetoland:
+    description: Allows the user to invite a player to their land
+    default: true
