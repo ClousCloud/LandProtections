@@ -37,4 +37,33 @@ class LandManager {
 
     public function isOwner(Position $position, string $playerName): bool {
         foreach ($this->protectedLands as $land) {
-            if ($this->isWithinLand($position, $land["position"], $land["size"]) && $land
+            if ($this->isWithinLand($position, $land["position"], $land["size"]) && $land["owner"] === $playerName) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function addInvite(Position $position, string $playerName): void {
+        foreach ($this->protectedLands as &$land) {
+            if ($this->isWithinLand($position, $land["position"], $land["size"])) {
+                $land["invited"][] = $playerName;
+                return;
+            }
+        }
+    }
+
+    public function isInvited(Position $position, string $playerName): bool {
+        foreach ($this->protectedLands as $land) {
+            if ($this->isWithinLand($position, $land["position"], $land["size"]) && in_array($playerName, $land["invited"])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function isWithinLand(Position $pos, Position $landPos, int $size): bool {
+        return abs($pos->getX() - $landPos->getX()) <= $size &&
+               abs($pos->getZ() - $landPos->getZ()) <= $size;
+    }
+}
