@@ -5,4 +5,9 @@ branches:
 projects:
   LandProtections:
     path: ""
+    lint:
+      phpstan: false
+    libs:
+      - src: Muqsit/SimplePacketHandler/SimplePacketHandler
+        version: ^0.1.4
 ...
