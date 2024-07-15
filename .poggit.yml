@@ -5,8 +5,4 @@ branches:
 projects:
   LandProtections:
     path: ""
-    libs:
-    - src: ACM-PocketMine-MP/Commando/Commando
-        version: ^3.2.1
-        branch: PM5
 ...
