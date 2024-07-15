@@ -10,25 +10,13 @@ use LandProtections\events\BlockEventListener;
 use LandProtections\land\LandManager;
 use cooldogedev\BedrockEconomy\api\BedrockEconomyAPI;
 use CortexPE\Commando\PacketHooker;
-use pocketmine\plugin\PluginOwned;
-use pocketmine\plugin\PluginOwnedTrait;
 
-class Main extends PluginBase implements PluginOwned {
-    use PluginOwnedTrait {
-        PluginOwnedTrait::getOwningPlugin as getPlugin; // Alias to avoid method name conflict
-    }
-
+class Main extends PluginBase {
     private BedrockEconomyAPI $economyAPI;
     private LandManager $landManager;
 
-    protected function onLoad(): void {
-        $this->owningPlugin = $this;
-    }
-
     public function onEnable(): void {
         $this->saveDefaultConfig();
-        
-        $this->getLogger()->info(TextFormat::GREEN . "LandProtections enabled");
 
         $plugin = $this->getServer()->getPluginManager()->getPlugin("BedrockEconomy");
         if ($plugin === null || !$plugin->isEnabled()) {
