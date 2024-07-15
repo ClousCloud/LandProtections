@@ -1,7 +1,7 @@
 name: LandProtections
 main: NurAzliYT\LandProtections\Main
 version: 1.0.0
-api: 5.0.0
+api: 4.0.0
 author: NurAzliYT
 depend: BedrockEconomy
 commands:
