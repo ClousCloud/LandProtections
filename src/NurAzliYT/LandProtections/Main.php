@@ -1,23 +1,29 @@
 <?php
 
-namespace NurAzliYT\LandProtections;
+namespace LandProtections;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\TextFormat;
-use NurAzliYT\LandProtections\commands\ProtectCommand;
-use NurAzliYT\LandProtections\commands\InviteToLandCommand;
-use NurAzliYT\LandProtections\events\BlockEventListener;
-use NurAzliYT\LandProtections\land\LandManager;
+use LandProtections\commands\ProtectCommand;
+use LandProtections\commands\InviteToLandCommand;
+use LandProtections\events\BlockEventListener;
+use LandProtections\land\LandManager;
 use cooldogedev\BedrockEconomy\api\BedrockEconomyAPI;
 use CortexPE\Commando\PacketHooker;
 use pocketmine\plugin\PluginOwned;
 use pocketmine\plugin\PluginOwnedTrait;
 
 class Main extends PluginBase implements PluginOwned {
-    use PluginOwnedTrait;
+    use PluginOwnedTrait {
+        PluginOwnedTrait::getOwningPlugin as getPlugin; // Alias to avoid method name conflict
+    }
 
     private BedrockEconomyAPI $economyAPI;
     private LandManager $landManager;
+
+    protected function onLoad(): void {
+        $this->owningPlugin = $this;
+    }
 
     public function onEnable(): void {
         $this->saveDefaultConfig();
