@@ -1,13 +1,13 @@
 <?php
 
-namespace LandProtections;
+namespace NurAzliYT\LandProtections;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\TextFormat;
-use LandProtections\commands\ProtectCommand;
-use LandProtections\commands\InviteToLandCommand;
-use LandProtections\events\BlockEventListener;
-use LandProtections\land\LandManager;
+use NurAzliYT\LandProtections\commands\ProtectCommand;
+use NurAzliYT\LandProtections\commands\InviteToLandCommand;
+use NurAzliYT\LandProtections\events\BlockEventListener;
+use NurAzliYTLandProtections\land\LandManager;
 use cooldogedev\BedrockEconomy\api\BedrockEconomyAPI;
 use CortexPE\Commando\PacketHooker;
 
