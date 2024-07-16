@@ -8,14 +8,15 @@ use pocketmine\player\Player;
 use NurAzliYT\LandProtections\land\LandManager;
 use cooldogedev\BedrockEconomy\api\BedrockEconomyAPI;
 use pocketmine\plugin\Plugin;
+use NurAzliYT\LandProtections\Main;
 
 class ProtectCommand extends BaseCommand
 {
     private LandManager $landManager;
     private BedrockEconomyAPI $economyAPI;
-    private Plugin $plugin;
+    private Main $plugin;
 
-    public function __construct(string $name, Plugin $plugin, LandManager $landManager, BedrockEconomyAPI $economyAPI)
+    public function __construct(string $name, Main $plugin, LandManager $landManager, BedrockEconomyAPI $economyAPI)
     {
         parent::__construct($name, "Protect your land", "/protect");
         $this->setPermission("landprotections.command.protect");
