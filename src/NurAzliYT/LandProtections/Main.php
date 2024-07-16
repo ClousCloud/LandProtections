@@ -17,6 +17,8 @@ class Main extends PluginBase {
 
     public function onEnable(): void {
         $this->saveDefaultConfig();
+        
+        $this->getLogger()->info(TextFormat::GREEN . "LandProtections enabled");
 
         $plugin = $this->getServer()->getPluginManager()->getPlugin("BedrockEconomy");
         if ($plugin === null || !$plugin->isEnabled()) {
@@ -25,7 +27,7 @@ class Main extends PluginBase {
             return;
         }
 
-        $this->economyAPI = $plugin->getAPI();
+        $this->economyAPI = BedrockEconomyAPI::ASYNC();
         $this->landManager = new LandManager($this);
 
         if (!PacketHooker::isRegistered()) {
