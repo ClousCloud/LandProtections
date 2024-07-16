@@ -9,10 +9,11 @@ use NurAzliYT\LandProtections\commands\InviteToLandCommand;
 use NurAzliYT\LandProtections\events\BlockEventListener;
 use NurAzliYT\LandProtections\land\LandManager;
 use cooldogedev\BedrockEconomy\api\BedrockEconomyAPI;
+use cooldogedev\BedrockEconomy\api\type\AsyncAPI;
 use CortexPE\Commando\PacketHooker;
 
 class Main extends PluginBase {
-    private BedrockEconomyAPI $economyAPI;
+    private AsyncAPI $economyAPI;
     private LandManager $landManager;
 
     public function onEnable(): void {
@@ -35,13 +36,13 @@ class Main extends PluginBase {
         }
         
         $this->getServer()->getCommandMap()->registerAll($this->getName(), [
-            new ProtectCommand($this),
-            new InviteToLandCommand($this)
+            new ProtectCommand($this, $this->economyAPI, $this->landManager),
+            new InviteToLandCommand($this, $this->landManager)
         ]);
-        $this->getServer()->getPluginManager()->registerEvents(new BlockEventListener($this), $this);
+        $this->getServer()->getPluginManager()->registerEvents(new BlockEventListener($this->landManager), $this);
     }
 
-    public function getEconomyAPI(): BedrockEconomyAPI {
+    public function getEconomyAPI(): AsyncAPI {
         return $this->economyAPI;
     }
 
