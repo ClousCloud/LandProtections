@@ -6,9 +6,15 @@ use CortexPE\Commando\BaseCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
-use NurAzliYT\LandProtections\Main;
+use NurAzliYT\LandProtections\land\LandManager;
 
 class InviteToLandCommand extends BaseCommand {
+    private LandManager $landManager;
+
+    public function __construct($plugin, LandManager $landManager) {
+        parent::__construct($plugin, "invitetoland", "Invite a player to your land");
+        $this->landManager = $landManager;
+    }
 
     protected function prepare(): void {
         $this->setPermission("landprotections.command.invitetoland");
@@ -36,12 +42,12 @@ class InviteToLandCommand extends BaseCommand {
         }
 
         $position = $player->getPosition();
-        if (!$this->getOwningPlugin()->getLandManager()->isLandProtected($position) || !$this->getOwningPlugin()->getLandManager()->isOwner($position, $player->getName())) {
+        if (!$this->landManager->isLandProtected($position) || !$this->landManager->isOwner($position, $player->getName())) {
             $player->sendMessage(TextFormat::RED . "You do not own this land or it is not protected");
             return;
         }
 
-        $this->getOwningPlugin()->getLandManager()->addInvite($position, $target->getName());
+        $this->landManager->addInvite($position, $target->getName());
         $player->sendMessage(TextFormat::GREEN . "Player invited successfully!");
         $target->sendMessage(TextFormat::GREEN . "You have been invited to a protected land by " . $player->getName());
     }
