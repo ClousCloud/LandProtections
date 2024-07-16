@@ -2,53 +2,48 @@
 
 namespace NurAzliYT\LandProtections\commands;
 
-use CortexPE\Commando\BaseCommand;
+use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
-use pocketmine\utils\TextFormat;
 use NurAzliYT\LandProtections\land\LandManager;
+use pocketmine\plugin\Plugin;
 
-class InviteToLandCommand extends BaseCommand {
+class InviteToLandCommand extends Command
+{
     private LandManager $landManager;
 
-    public function __construct($plugin, LandManager $landManager) {
-        parent::__construct($plugin, "invitetoland", "Invite a player to your land");
+    public function __construct(Plugin $plugin, LandManager $landManager)
+    {
+        parent::__construct("invite", "Invite a player to your land", "/invite <player>");
+        $this->setPermission("landprotections.command.invite");
         $this->landManager = $landManager;
     }
 
-    protected function prepare(): void {
-        $this->setPermission("landprotections.command.invitetoland");
-        $this->registerArgument(0, new \CortexPE\Commando\args\RawStringArgument("player", true));
-    }
-
-    public function onRun(CommandSender $sender, string $label, array $args): void {
+    public function execute(CommandSender $sender, string $commandLabel, array $args)
+    {
         if (!$sender instanceof Player) {
-            $sender->sendMessage(TextFormat::RED . "This command can only be used in-game");
+            $sender->sendMessage("This command can only be used in-game.");
             return;
         }
 
-        if (empty($args["player"])) {
-            $sender->sendMessage(TextFormat::RED . "Usage: /invitetoland <player>");
+        if (!$this->testPermission($sender)) {
             return;
         }
 
-        $player = $sender;
-        $targetName = $args["player"];
-        $target = $this->getOwningPlugin()->getServer()->getPlayerByPrefix($targetName);
-
-        if ($target === null || !$target->isOnline()) {
-            $player->sendMessage(TextFormat::RED . "Player not found or not online");
+        if (count($args) < 1) {
+            $sender->sendMessage("Usage: /invite <player>");
             return;
         }
 
-        $position = $player->getPosition();
-        if (!$this->landManager->isLandProtected($position) || !$this->landManager->isOwner($position, $player->getName())) {
-            $player->sendMessage(TextFormat::RED . "You do not own this land or it is not protected");
+        $playerName = $args[0];
+        $position = $sender->getPosition();
+
+        if (!$this->landManager->isOwner($position, $sender->getName())) {
+            $sender->sendMessage("You do not own this land.");
             return;
         }
 
-        $this->landManager->addInvite($position, $target->getName());
-        $player->sendMessage(TextFormat::GREEN . "Player invited successfully!");
-        $target->sendMessage(TextFormat::GREEN . "You have been invited to a protected land by " . $player->getName());
+        $this->landManager->addInvite($position, $playerName);
+        $sender->sendMessage("Player $playerName has been invited to your land.");
     }
 }
