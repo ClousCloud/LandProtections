@@ -1,25 +1,29 @@
 <?php
 
-namespace NurAzliYT\LandProtections\commands;
+namespace LandProtections\commands;
 
-use pocketmine\command\Command;
+use CortexPE\Commando\BaseCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
-use NurAzliYT\LandProtections\land\LandManager;
-use pocketmine\plugin\Plugin;
+use LandProtections\land\LandManager;
 
-class InviteToLandCommand extends Command
+class InviteToLandCommand extends BaseCommand
 {
     private LandManager $landManager;
 
-    public function __construct(Plugin $plugin, LandManager $landManager)
+    public function __construct(string $name, string $description = "", string $usageMessage = null, array $aliases = [])
     {
-        parent::__construct("invite", "Invite a player to your land", "/invite <player>");
-        $this->setPermission("landprotections.command.invite");
+        parent::__construct($name, $description, $usageMessage, $aliases);
         $this->landManager = $landManager;
     }
 
-    public function execute(CommandSender $sender, string $commandLabel, array $args)
+    protected function prepare(): void
+    {
+        $this->registerArgument(0, new RawStringArgument("player", true));
+        $this->setPermission("landprotections.command.invite");
+    }
+
+    public function onRun(CommandSender $sender, string $commandLabel, array $args): void
     {
         if (!$sender instanceof Player) {
             $sender->sendMessage("This command can only be used in-game.");
@@ -30,12 +34,7 @@ class InviteToLandCommand extends Command
             return;
         }
 
-        if (count($args) < 1) {
-            $sender->sendMessage("Usage: /invite <player>");
-            return;
-        }
-
-        $playerName = $args[0];
+        $playerName = $args["player"];
         $position = $sender->getPosition();
 
         if (!$this->landManager->isOwner($position, $sender->getName())) {
