@@ -5,51 +5,59 @@ namespace NurAzliYT\LandProtections\commands;
 use CortexPE\Commando\BaseCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
-use pocketmine\utils\TextFormat;
 use NurAzliYT\LandProtections\land\LandManager;
-use cooldogedev\BedrockEconomy\api\type\AsyncAPI;
+use cooldogedev\BedrockEconomy\api\BedrockEconomyAPI;
+use pocketmine\plugin\Plugin;
 
-class ProtectCommand extends BaseCommand {
-    private AsyncAPI $economyAPI;
+class ProtectCommand extends BaseCommand
+{
     private LandManager $landManager;
+    private BedrockEconomyAPI $economyAPI;
+    private Plugin $plugin;
 
-    public function __construct($plugin, AsyncAPI $economyAPI, LandManager $landManager) {
-        parent::__construct($plugin, "protect", "Protect your land");
-        $this->economyAPI = $economyAPI;
-        $this->landManager = $landManager;
-    }
-
-    protected function prepare(): void {
+    public function __construct(string $name, Plugin $plugin, LandManager $landManager, BedrockEconomyAPI $economyAPI)
+    {
+        parent::__construct($name, "Protect your land", "/protect");
         $this->setPermission("landprotections.command.protect");
+        $this->plugin = $plugin;
+        $this->landManager = $landManager;
+        $this->economyAPI = $economyAPI;
     }
 
-    public function onRun(CommandSender $sender, string $label, array $args): void {
+    protected function prepare(): void
+    {
+        // No arguments needed for this command
+    }
+
+    public function onRun(CommandSender $sender, string $commandLabel, array $args): void
+    {
         if (!$sender instanceof Player) {
-            $sender->sendMessage(TextFormat::RED . "This command can only be used in-game");
+            $sender->sendMessage("This command can only be used in-game.");
             return;
         }
 
-        $player = $sender;
-        $cost = $this->getOwningPlugin()->getConfig()->getNested("land.protection-cost");
+        if (!$this->testPermission($sender)) {
+            return;
+        }
 
-        $this->economyAPI->getPlayerBalance($player->getName(), function(float $balance) use ($player, $cost) {
+        $position = $sender->getPosition();
+        $config = $this->plugin->getConfig();
+
+        if ($this->landManager->isLandProtected($position)) {
+            $sender->sendMessage("This land is already protected.");
+            return;
+        }
+
+        $cost = $config->get("protect-cost", 100);
+        $this->economyAPI::ASYNC()->getPlayerBalance($sender->getName())->onCompletion(function($balance) use ($sender, $cost, $position) {
             if ($balance < $cost) {
-                $player->sendMessage(TextFormat::RED . "You do not have enough money to protect this land");
+                $sender->sendMessage("You do not have enough money to protect this land.");
                 return;
             }
 
-            if ($this->landManager->isLandProtected($player->getPosition())) {
-                $player->sendMessage(TextFormat::RED . "This land is already protected");
-                return;
-            }
-
-            $this->economyAPI->subtractFromPlayerBalance($player->getName(), $cost, function(bool $success) use ($player) {
-                if ($success) {
-                    $this->landManager->protectLand($player->getPosition(), $player->getName());
-                    $player->sendMessage(TextFormat::GREEN . "Land protected successfully!");
-                } else {
-                    $player->sendMessage(TextFormat::RED . "Failed to subtract money for land protection");
-                }
+            $this->economyAPI::ASYNC()->subtractFromPlayerBalance($sender->getName(), $cost)->onCompletion(function() use ($sender, $position) {
+                $this->landManager->protectLand($position, $sender->getName());
+                $sender->sendMessage("Your land has been protected.");
             });
         });
     }
